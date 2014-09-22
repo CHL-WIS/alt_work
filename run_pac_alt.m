@@ -41,7 +41,7 @@ end
 cd(dd)
 %get_alt_daily([year,mon,'01',],[year,'06','01'],[110,300,-64,64],0.5);
 %get_alt_daily([year,mon,'01',],[year,'06','01'],[198.0,207.0,17.0,23.9],0.15);
-get_alt_daily([year,mon,'01',],[year2,monc2,'01'],coord,res);
+%get_alt_daily([year,mon,'01',],[year2,monc2,'01'],coord,res);
 
 system('bunzip2 *.bz2');
 

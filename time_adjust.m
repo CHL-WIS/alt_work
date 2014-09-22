@@ -22,8 +22,8 @@ for zz = 1:length(thalf)-1
             if size(qq,1) > 0
                 lont{pp} = lon{ii,jj}(qq); %#ok<*AGROW>
                 latt{pp} = lat{ii,jj}(qq);
-%                 zilon{pp} = kNearestNeighbors(long',lon{ii,jj}(qq),1);
-%                 zilat{pp} = kNearestNeighbors(latg',lat{ii,jj}(qq),1);
+                %                 zilon{pp} = kNearestNeighbors(long',lon{ii,jj}(qq),1);
+                %                 zilat{pp} = kNearestNeighbors(latg',lat{ii,jj}(qq),1);
                 Hsnew{pp} = Hs{ii,jj}(qq);
                 pp = pp + 1;
             elseif pp > 1
@@ -35,49 +35,61 @@ for zz = 1:length(thalf)-1
         end
     end
     
-     Hsgrid = NaN(length(latg),length(long));
-     if exist('Hsnew','var')
-         if pp > 2
-              lon2 = [lont{1};lont{2}];
-              lat2 = [latt{1};latt{2}];
-%               zilon2 = [zilon{1};zilon{2}];
-%               zilat2 = [zilat{1};zilat{2}];
-              Hsnew2 = [Hsnew{1};Hsnew{2}];
- 
-         else
-             lon2 = lont{1};
-             lat2 = latt{1};
-%              zilon2 = [zilon{1}];
-%              zilat2 = [zilat{1}];
-             Hsnew2 = Hsnew{1};
-         end
-       
-%         Hsgrid = bin2mat(lon2,lat2,Hsnew2,X,Y);
-       
-%              lonn = long(zilon2);
-%              latn = latg(zilat2);
-             [~, xind] = histc(lon2,long);
-             [~, yind] = histc(lat2,latg);
-% %         Hsn = Hsnew2(1);
-% %         Hsgrid(zilon2(1,:),zilat2(1,:)) = Hsn;
-         for ii = 1:size(xind,1)
+    Hsgrid = NaN(length(latg),length(long));
+    if exist('Hsnew','var')
+        if pp > 2
+            lon2 = [lont{1};lont{2}];
+            lat2 = [latt{1};latt{2}];
+            %               zilon2 = [zilon{1};zilon{2}];
+            %               zilat2 = [zilat{1};zilat{2}];
+            Hsnew2 = [Hsnew{1};Hsnew{2}];
+            
+        else
+            lon2 = lont{1};
+            lat2 = latt{1};
+            %              zilon2 = [zilon{1}];
+            %              zilat2 = [zilat{1}];
+            Hsnew2 = Hsnew{1};
+        end
+        
+        %         Hsgrid = bin2mat(lon2,lat2,Hsnew2,X,Y);
+        
+        %              lonn = long(zilon2);
+        %              latn = latg(zilat2);
+        [~, xind] = histc(lon2,long);
+        [~, yind] = histc(lat2,latg);
+        % %         Hsn = Hsnew2(1);
+        % %         Hsgrid(zilon2(1,:),zilat2(1,:)) = Hsn;
+        for ii = 1:size(xind,1)
             % for qq = 1:1
-            %     for pp = 1:1
-                     if ~isnan(Hsgrid(yind(ii),xind(ii)))
-             %if zilon2(ii,1) == zilon2(ii-1,1) && ...
-             %        zilat2(ii,1) == zilat2(ii-1,1)
-                         Hsn = (Hsnew2(ii)+ Hsgrid(yind(ii),xind(ii)))/2.;
-                     else 
-                         Hsn = Hsnew2(ii);
-                     end
-                     Hsgrid(yind(ii),xind(ii)) = Hsn;
-            %     end
-             %end
-         end
-         clear zilon zilat Hsnew
-      else
-          lon2 = -999.00;lat2 = -999.00;
-     end
-
+            xx = xind(ii);
+            yy = yind(ii);
+            ppx = [xx-1,xx,xx+1,xx-1,xx,xx+1,xx-1,xx,xx+1,xx-1,xx,xx+1,xx-1,xx,xx+1];
+            ppy = [yy+1,yy+1,yy+1,yy+1,yy+1,yy,yy,yy,yy,yy,yy-1,yy-1,yy-1,yy-1,yy-1];
+            for istep = 1:15
+                %     for pp = 1:1
+                if ppx(istep) < 1 | ppx(istep) > length(long) | ppy(istep) < ...
+                        1 | ppy(istep) > length(latg)
+                    continue
+                end
+                if ~isnan(Hsgrid(ppy(istep),ppx(istep)))
+                    Hsn = (Hsnew2(ii) + Hsgrid(ppy(istep),ppx(istep)))/2.;
+                    % if ~isnan(Hsgrid(yind(ii),xind(ii)))
+                    %if zilon2(ii,1) == zilon2(ii-1,1) && ...
+                    %        zilat2(ii,1) == zilat2(ii-1,1)
+                    %         Hsn = (Hsnew2(ii)+ Hsgrid(yind(ii),xind(ii)))/2.;
+                else
+                    Hsn = Hsnew2(ii);
+                end
+                Hsgrid(ppy(istep),ppx(istep)) = Hsn;
+                %Hsgrid(yind(ii),xind(ii)) = Hsn;
+                %     end
+            end
+        end
+        clear zilon zilat Hsnew
+    else
+        lon2 = -999.00;lat2 = -999.00;
+    end
+    
     sat_grid(zz) = struct('stime',datestr(tt(zz)),'mtime',tt(zz),'Hs_grid',Hsgrid,'lon',lon2,'lat',lat2,'long',long,'latg',latg);         %#ok<AGROW>
 end
