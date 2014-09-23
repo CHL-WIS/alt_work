@@ -3,7 +3,7 @@ function ww3_alt(alt_data,loc,coord,res)
 
 %fname = ['E:\Pacific\WW3\ST4-New\',yearmon];
 cd(loc)
-[mod_out,mod_bias,mod_rmse,alt_out,blah,yearmon] = alt_stat1(alt_data);
+[mod_out,mod_bias,mod_rmse,alt_out,blah] = alt_stat1(alt_data);
 %[mod_track,mod_bias,tlon,tlat,yearmon] = alt_stat1_track(alt_data,381,257);
 %filed = [yearmon(1:4),yearmon(6:7),'_WIS_PacWW3_OWI_ST4-hss.tgz']
 % fname = ls('*-hss.tgz');

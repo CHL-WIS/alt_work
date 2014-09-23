@@ -1,4 +1,4 @@
-year = '1999';
+year = '2008';
 mon = '03';
 for jgrd = 1:4
 	if jgrd == 3
@@ -41,11 +41,11 @@ end
 cd(dd)
 %get_alt_daily([year,mon,'01',],[year,'06','01'],[110,300,-64,64],0.5);
 %get_alt_daily([year,mon,'01',],[year,'06','01'],[198.0,207.0,17.0,23.9],0.15);
-%get_alt_daily([year,mon,'01',],[year2,monc2,'01'],coord,res);
+get_alt_daily([year,mon,'01',],[year2,monc2,'01'],coord,res);
 
 system('bunzip2 *.bz2');
 
-%sat = read_alt_daily([year,mon,'01000000'],[year,'06','01000000'],[110 300 -64 64],0.5);
+%sat = read_alt_daily([year,mon,'01000000'],[year,'04','01000000'],[110 300 -64 64],0.5);
 sat = read_alt_daily([year,mon,'01000000'],[year2,monc2,'01000000'],coord,res);
 
 system(['cp /mnt/CHL_WIS_1/Pacific/Production/Model_Old/',year,'-',mon, ...

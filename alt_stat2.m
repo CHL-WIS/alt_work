@@ -16,26 +16,30 @@ for jj = 3:size(alt_out,2)-2
     for ii = 3:size(alt_out,1)-2
 %        ppx = [ii-1,ii,ii+1,ii-1,ii,ii+1,ii-1,ii,ii+1];
 %        ppy = [jj+1,jj+1,jj+1,jj,jj,jj,jj-1,jj-1,jj-1];
-       ppx = [ii-2,ii-1,ii,ii+1,ii+2,ii-2,ii-1,ii,ii+1,ii+2,ii-2,ii-1,ii, ...
-          ii+1,ii+2,ii-2,ii-1,ii,ii+1,ii+2,ii-2,ii-1,ii,ii+1,ii+2];
-       ppy = [jj+2,jj+2,jj+2,jj+2,jj+2,jj+1,jj+1,jj+1,jj+1,jj+1,jj,jj,jj, ...
-           jj,jj,jj-1,jj-1,jj-1,jj-1,jj-1,jj-2,jj-2,jj-2,jj-2,jj-2];
-       
-       for zz = 1:25
-           qq = ~isnan(alt_out(ppx(zz),ppy(zz),:));
-           mod_bias2(ii,jj,zz) = mean(mod_bias(ppx(zz),ppy(zz),qq));
-           alt_out2(ii,jj,zz) = mean(alt_out(ppx(zz),ppy(zz),qq));
-           mod_rmse2(ii,jj,zz) = mean(mod_rmse(ppx(zz),ppy(zz),qq));
-       end
+       %ppx = [ii-2,ii-1,ii,ii+1,ii+2,ii-2,ii-1,ii,ii+1,ii+2,ii-2,ii-1,ii, ...
+       %   ii+1,ii+2,ii-2,ii-1,ii,ii+1,ii+2,ii-2,ii-1,ii,ii+1,ii+2];
+       %ppy = [jj+2,jj+2,jj+2,jj+2,jj+2,jj+1,jj+1,jj+1,jj+1,jj+1,jj,jj,jj, ...
+       %    jj,jj,jj-1,jj-1,jj-1,jj-1,jj-1,jj-2,jj-2,jj-2,jj-2,jj-2];
+       qq = find(~isnan(alt_out(ii,jj,:)));
+       mod_bias3(ii,jj) = mean(mod_bias(ii,jj,qq));
+       alt_out3(ii,jj) = mean(alt_out(ii,jj,qq));
+       mod_rmse3(ii,jj) = sum((mod_rmse(ii,jj,qq) - repmat(mod_bias3(ii,jj),[1 1 length(qq)])).^2.)/ ...
+           size(alt_out(ii,jj,qq),3);
+       %for zz = 1:25
+       %    qq = ~isnan(alt_out(ppx(zz),ppy(zz),:));
+       %    mod_bias2(ii,jj,zz) = mean(mod_bias(ppx(zz),ppy(zz),qq));
+       %    alt_out2(ii,jj,zz) = mean(alt_out(ppx(zz),ppy(zz),qq));
+       %    mod_rmse2(ii,jj,zz) = mean(mod_rmse(ppx(zz),ppy(zz),qq));
+       %end
        clear qq
-       qq = ~isnan(alt_out2(ii,jj,:));
-       disttot = sum(1./dist(qq).^2);
-       aout2(:,1) = alt_out2(ii,jj,qq);
-       alt_out3(ii,jj) = sum(aout2./dist(qq)'.^2)./disttot;
-       modb2(:,1) = mod_bias2(ii,jj,qq);
-       mod_bias3(ii,jj) = sum(modb2./dist(qq)'.^2)./disttot;
-       modr2(:,1) = mod_rmse2(ii,jj,qq);
-       mod_rmse3(ii,jj) = sum(modr2./dist(qq)'.^2)./disttot;
+       %qq = ~isnan(alt_out2(ii,jj,:));
+       %disttot = sum(1./dist(qq).^2);
+       %aout2(:,1) = alt_out2(ii,jj,qq);
+       %alt_out3(ii,jj) = sum(aout2./dist(qq)'.^2)./disttot;
+       %modb2(:,1) = mod_bias2(ii,jj,qq);
+       %mod_bias3(ii,jj) = sum(modb2./dist(qq)'.^2)./disttot;
+       %modr2(:,1) = mod_rmse2(ii,jj,qq);
+       %mod_rmse3(ii,jj) = sum(modr2./dist(qq)'.^2)./disttot;
        %mod_bias3(ii,jj) = mean(mod_bias2(ii,jj,qq));
        %mod_rmse3(ii,jj) = sqrt(sum(mod_rmse2(ii,jj,qq))/length(qq));
        mod_si(ii,jj) = mod_rmse3(ii,jj)./alt_out3(ii,jj).*100;

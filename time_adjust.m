@@ -36,6 +36,9 @@ for zz = 1:length(thalf)-1
     end
     
     Hsgrid = NaN(length(latg),length(long));
+    Hstemp = repmat({NaN},[length(latg) length(long)]);
+    Hsgridtest = NaN(length(latg),length(long));
+    Hstemptest = repmat({NaN},[length(latg) length(long)]);
     if exist('Hsnew','var')
         if pp > 2
             lon2 = [lont{1};lont{2}];
@@ -64,26 +67,48 @@ for zz = 1:length(thalf)-1
             % for qq = 1:1
             xx = xind(ii);
             yy = yind(ii);
-            ppx = [xx-1,xx,xx+1,xx-1,xx,xx+1,xx-1,xx,xx+1,xx-1,xx,xx+1,xx-1,xx,xx+1];
-            ppy = [yy+1,yy+1,yy+1,yy+1,yy+1,yy,yy,yy,yy,yy,yy-1,yy-1,yy-1,yy-1,yy-1];
-            for istep = 1:15
+            ppx = xx;
+            ppy = yy;
+            %ppx = [xx-1,xx,xx+1,xx-1,xx,xx+1,xx-1,xx,xx+1,xx-1,xx,xx+1,xx-1,xx,xx+1];
+            %ppy = [yy+1,yy+1,yy+1,yy+1,yy+1,yy,yy,yy,yy,yy,yy-1,yy-1,yy-1,yy-1,yy-1];
+            %ppx = [xx-2,xx-1,xx,xx+1,xx+2,xx-2,xx-1,xx,xx+1,xx+2,xx-2,xx-1,xx, ...
+            %       xx+1,xx+2,xx-2,xx-1,xx,xx+1,xx+2,xx-2,xx-1,xx,xx+1,xx+2];
+            %ppy = [yy+2,yy+2,yy+2,yy+2,yy+2,yy+1,yy+1,yy+1,yy+1,yy+1,yy,yy,yy, ...
+            %       yy,yy,yy-1,yy-1,yy-1,yy-1,yy-1,yy-2,yy-2,yy-2,yy-2,yy-2];
+            for istep = 1:1
                 %     for pp = 1:1
                 if ppx(istep) < 1 | ppx(istep) > length(long) | ppy(istep) < ...
                         1 | ppy(istep) > length(latg)
                     continue
                 end
-                if ~isnan(Hsgrid(ppy(istep),ppx(istep)))
-                    Hsn = (Hsnew2(ii) + Hsgrid(ppy(istep),ppx(istep)))/2.;
+                if ~isnan(Hstemp{ppy(istep),ppx(istep)})
+                    Hstemp{ppy(istep),ppx(istep)} = [Hstemp{ppy(istep),ppx(istep)}; ...
+                        Hsnew2(ii)];
+                    Hstemptest{ppy(istep),ppx(istep)} = [Hstemptest{ppy(istep),ppx(istep)}; ...
+                        Hsnew2(ii)];
+                else
+                    Hstemp{ppy(istep),ppx(istep)} = Hsnew2(ii);
+                    Hstemptest{ppy(istep),ppx(istep)} = Hsnew2(ii);
+                end
+               % if ~isnan(Hsgrid(ppy(istep),ppx(istep)))
+               %     Hsn = (Hsnew2(ii) + Hsgrid(ppy(istep),ppx(istep)))/2.;
                     % if ~isnan(Hsgrid(yind(ii),xind(ii)))
                     %if zilon2(ii,1) == zilon2(ii-1,1) && ...
                     %        zilat2(ii,1) == zilat2(ii-1,1)
                     %         Hsn = (Hsnew2(ii)+ Hsgrid(yind(ii),xind(ii)))/2.;
-                else
-                    Hsn = Hsnew2(ii);
-                end
-                Hsgrid(ppy(istep),ppx(istep)) = Hsn;
+               % else
+               %     Hsn = Hsnew2(ii);
+               % end
+                %Hsgrid(ppy(istep),ppx(istep)) = Hsn;
                 %Hsgrid(yind(ii),xind(ii)) = Hsn;
                 %     end
+            end
+        end
+        for jj = 1:length(latg)
+            for ii = 1:length(long)
+                if ~isnan(Hstemp{jj,ii}(1));
+                    Hsgrid(jj,ii) = mean(Hstemp{jj,ii}(:));
+                end
             end
         end
         clear zilon zilat Hsnew
@@ -93,3 +118,11 @@ for zz = 1:length(thalf)-1
     
     sat_grid(zz) = struct('stime',datestr(tt(zz)),'mtime',tt(zz),'Hs_grid',Hsgrid,'lon',lon2,'lat',lat2,'long',long,'latg',latg);         %#ok<AGROW>
 end
+% for jj = 1:length(latg)
+%             for ii = 1:length(long)
+%                 if ~isnan(Hstemp{jj,ii}(1));
+%                     Hsgridtest(jj,ii) = mean(Hstemptest{jj,ii}(:));
+%                 end
+%             end
+% end
+%        1
